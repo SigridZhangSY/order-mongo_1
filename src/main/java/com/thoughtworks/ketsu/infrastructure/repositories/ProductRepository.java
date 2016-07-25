@@ -50,5 +50,15 @@ public class ProductRepository implements com.thoughtworks.ketsu.domain.product.
         return productList;
     }
 
+    @Override
+    public Product find(String id) {
+        DBCollection table = db.getCollection("products");
+        BasicDBObject searchQuery = new BasicDBObject();
+        searchQuery.put("_id", new ObjectId(id));
+        DBObject obj = table.find(searchQuery).next();
+        Product product = new Product((BasicDBObject) obj);
+        return product;
+    }
+
 
 }

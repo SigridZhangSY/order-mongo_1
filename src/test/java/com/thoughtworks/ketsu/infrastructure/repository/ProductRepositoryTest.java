@@ -66,6 +66,14 @@ public class ProductRepositoryTest {
         TestHelper.clean("products");
     }
 
+    @Test
+    public void should_find_product_by_id() throws UnknownHostException {
+        Product product = productRepository.save(TestHelper.productMap("apple"));
+        Product product_res = productRepository.find(product.getId());
+        assertThat(product_res.getId(), is(product.getId()));
+        TestHelper.clean("products");
+    }
+
     @After
     public void closeConnection(){
         mongoClient.close();

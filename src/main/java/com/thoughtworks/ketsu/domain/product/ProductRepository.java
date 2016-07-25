@@ -9,4 +9,5 @@ import java.util.Map;
 public interface ProductRepository {
     Product save(Map<String, Object> info);
     List<Product> list();
+    Product find(String id);
 }
