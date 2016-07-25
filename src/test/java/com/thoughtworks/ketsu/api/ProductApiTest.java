@@ -57,8 +57,7 @@ public class ProductApiTest extends ApiSupport{
 
     @Test
     public void should_find_by_id(){
-        Product product = productRepository.save(TestHelper.productMap("apple"));
-        Response get = get("products/" + product.getId());
+        Response get = get("products/1");
         assertThat(get.getStatus(), is(200));
     }
 

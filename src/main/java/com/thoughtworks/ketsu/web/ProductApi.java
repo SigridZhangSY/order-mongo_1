@@ -45,5 +45,11 @@ public class ProductApi {
         return productRepository.list();
     }
 
+    @GET
+    @Path("{productId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String findProduct(){
+        return "OK";
+    }
 
 }
