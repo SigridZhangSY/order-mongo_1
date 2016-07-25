@@ -1,5 +1,6 @@
 package com.thoughtworks.ketsu.domain.product;
 
+import com.mongodb.DBObject;
 import com.thoughtworks.ketsu.infrastructure.records.Record;
 import com.thoughtworks.ketsu.web.jersey.Routes;
 
@@ -7,13 +8,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Product  {
-    private long id;
+    private String id;
     private String name;
     private String description;
     private float price;
 
+    public Product(DBObject obj){
+        this.id = obj.get("_id").toString();
+        this.name = obj.get("name").toString();
+        this.description = obj.get("description").toString();
+        this.price = Float.valueOf(obj.get("price").toString());
 
-    public long getId() {
+    }
+
+
+    public String getId() {
         return id;
     }
 

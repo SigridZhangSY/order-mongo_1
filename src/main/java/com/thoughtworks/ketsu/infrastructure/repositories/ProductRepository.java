@@ -15,6 +15,8 @@ public class ProductRepository implements com.thoughtworks.ketsu.domain.product.
         DBCollection table = db.getCollection("products");
         BasicDBObject document = new BasicDBObject();
         document.put("name", info.get("name"));
+        document.put("description", info.get("description"));
+        document.put("price", info.get("price"));
         table.insert(document);
 
         BasicDBObject searchQuery = new BasicDBObject();

@@ -19,6 +19,7 @@ public class ProductApiTest extends ApiSupport{
     public void should_return_201_when_post(){
         Response post = post("products", TestHelper.productMap("apple"));
         assertThat(post.getStatus(), is(201));
+        assertThat(Pattern.matches(".*/products/.*", post.getLocation().toASCIIString()), is(true));
     }
 
 
