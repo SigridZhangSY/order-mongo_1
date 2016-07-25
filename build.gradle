@@ -39,7 +39,7 @@ ext {
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 dependencies {
-    compile "org.slf4j:slf4j-api:$slf4j"
+    compile "org.slf4j:slf4j-web:$slf4j"
     compile "org.slf4j:jcl-over-slf4j:$slf4j"
     compile "org.slf4j:slf4j-log4j12:$slf4j"
     compile files("lib/jbcrypt.jar")
@@ -56,8 +56,8 @@ dependencies {
     compile 'org.glassfish.grizzly:grizzly-http-servlet:2.3.16'
 
     compile "joda-time:joda-time:$joda_time"
-    compile "javax.servlet:javax.servlet-api:$servlet_api"
-    compile "javax.ws.rs:javax.ws.rs-api:$jaxrs"
+    compile "javax.servlet:javax.servlet-web:$servlet_api"
+    compile "javax.ws.rs:javax.ws.rs-web:$jaxrs"
     compile "org.glassfish.hk2:guice-bridge:$hk2_api"
     compile "org.glassfish.jersey.media:jersey-media-json-jackson:$jersey"
 
