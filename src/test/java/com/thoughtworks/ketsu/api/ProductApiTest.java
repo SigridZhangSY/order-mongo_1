@@ -1,11 +1,14 @@
 package com.thoughtworks.ketsu.api;
 
+import com.thoughtworks.ketsu.domain.product.Product;
+import com.thoughtworks.ketsu.domain.product.ProductRepository;
 import com.thoughtworks.ketsu.support.ApiSupport;
 import com.thoughtworks.ketsu.support.ApiTestRunner;
 import com.thoughtworks.ketsu.support.TestHelper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -15,6 +18,9 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(ApiTestRunner.class)
 public class ProductApiTest extends ApiSupport{
+
+    @Inject
+    ProductRepository productRepository;
 
     @Test
     public void should_return_201_when_post(){
@@ -31,5 +37,11 @@ public class ProductApiTest extends ApiSupport{
         assertThat(post.getStatus(), is(400));
     }
 
+
+    @Test
+    public void should_return_200_when_list_products(){
+        Response get = get("products");
+        assertThat(get.getStatus(), is(200));
+    }
 
 }

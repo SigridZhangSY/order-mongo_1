@@ -7,9 +7,7 @@ import com.thoughtworks.ketsu.web.exception.InvalidParameterException;
 import com.thoughtworks.ketsu.web.jersey.Routes;
 import org.apache.ibatis.annotations.Param;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -39,5 +37,11 @@ public class ProductApi {
 
         Product product = productRepository.save(info);
         return Response.created(routes.productUri(product)).build();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String listProducts(){
+        return "OK";
     }
 }
