@@ -5,9 +5,10 @@ import com.mongodb.DBCursor;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public interface ProductRepository {
     Product save(Map<String, Object> info);
     List<Product> list();
-    Product find(String id);
+    Optional<Product> find(String id);
 }

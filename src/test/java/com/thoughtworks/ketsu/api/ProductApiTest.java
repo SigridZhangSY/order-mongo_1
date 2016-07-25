@@ -56,7 +56,7 @@ public class ProductApiTest extends ApiSupport{
     }
 
     @Test
-    public void should_renturn_detail_when_find_by_id() throws UnknownHostException {
+    public void should_return_detail_when_find_by_id() throws UnknownHostException {
         Product product = productRepository.save(TestHelper.productMap("apple"));
         Response get = get("products/" + product.getId());
         assertThat(get.getStatus(), is(200));
@@ -65,5 +65,12 @@ public class ProductApiTest extends ApiSupport{
         TestHelper.clean("products");
     }
 
+    @Test
+    public void should_return_404_when_product_not_exist() throws UnknownHostException {
+        Product product = productRepository.save(TestHelper.productMap("apple"));
+        Response get = get("products/1");
+        assertThat(get.getStatus(), is(404));
+        TestHelper.clean("products");
+    }
 
 }

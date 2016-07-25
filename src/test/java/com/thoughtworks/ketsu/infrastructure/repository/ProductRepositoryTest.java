@@ -69,7 +69,7 @@ public class ProductRepositoryTest {
     @Test
     public void should_find_product_by_id() throws UnknownHostException {
         Product product = productRepository.save(TestHelper.productMap("apple"));
-        Product product_res = productRepository.find(product.getId());
+        Product product_res = productRepository.find(product.getId()).get();
         assertThat(product_res.getId(), is(product.getId()));
         TestHelper.clean("products");
     }

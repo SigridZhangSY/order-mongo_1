@@ -15,6 +15,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Path("products")
 public class ProductApi {
@@ -50,7 +51,11 @@ public class ProductApi {
     @Produces(MediaType.APPLICATION_JSON)
     public Product findProduct(@PathParam("productId") String id,
                                @Context ProductRepository productRepository){
-        return productRepository.find(id);
+        Optional<Product> product = productRepository.find(id);
+        if (product.isPresent())
+            return product.get();
+        else
+            throw new NotFoundException("product not found");
     }
 
 }

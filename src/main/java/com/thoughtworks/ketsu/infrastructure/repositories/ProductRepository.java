@@ -4,10 +4,12 @@ import com.mongodb.*;
 import com.thoughtworks.ketsu.domain.product.Product;
 import org.bson.types.ObjectId;
 
+import javax.ws.rs.NotFoundException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class ProductRepository implements com.thoughtworks.ketsu.domain.product.ProductRepository {
     private DB db;
@@ -51,13 +53,22 @@ public class ProductRepository implements com.thoughtworks.ketsu.domain.product.
     }
 
     @Override
-    public Product find(String id) {
+    public Optional<Product> find(String id) {
+        ObjectId objectId;
         DBCollection table = db.getCollection("products");
         BasicDBObject searchQuery = new BasicDBObject();
-        searchQuery.put("_id", new ObjectId(id));
-        DBObject obj = table.find(searchQuery).next();
-        Product product = new Product((BasicDBObject) obj);
-        return product;
+        try{
+            objectId = new ObjectId(id);
+        } catch (Exception e){
+            throw new NotFoundException("product not found");
+        }
+        searchQuery.put("_id", objectId);
+        DBCursor cursor = table.find(searchQuery);
+        if(cursor.hasNext()) {
+            Product product = new Product((BasicDBObject) cursor.next());
+            return Optional.of(product);
+        }else
+            return Optional.ofNullable(null);
     }
 
 
