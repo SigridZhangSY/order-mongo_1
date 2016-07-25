@@ -27,24 +27,24 @@ public class ApiTestRunner extends InjectBasedRunner {
         super(klass);
     }
 
-    private final TestRule removeAllData = (base, description) -> new Statement() {
-        @Override
-        public void evaluate() throws Throwable {
-            try {
-                base.evaluate();
-            } finally {
-                SqlSession sqlSession = sqlSessionFactory.openSession();
-                Connection connection = sqlSession.getConnection();
-                java.sql.Statement statement = connection.createStatement();
-                // Take care of the order for delete operations, eg.
-                // field in table A has reference for table B, then A should be deleted first
-                // otherwise exception will occur and database will be broken,
-                // remember to clean database manually before running tests when exception happens
-                statement.close();
-                connection.commit();
-            }
-        }
-    };
+//    private final TestRule removeAllData = (base, description) -> new Statement() {
+//        @Override
+//        public void evaluate() throws Throwable {
+//            try {
+//                base.evaluate();
+//            } finally {
+//                SqlSession sqlSession = sqlSessionFactory.openSession();
+////                Connection connection = sqlSession.getConnection();
+////                java.sql.Statement statement = connection.createStatement();
+//                // Take care of the order for delete operations, eg.
+//                // field in table A has reference for table B, then A should be deleted first
+//                // otherwise exception will occur and database will be broken,
+//                // remember to clean database manually before running tests when exception happens
+////                statement.close();
+////                connection.commit();
+//            }
+//        }
+//    };
 
     @Override
     protected List<AbstractModule> getModules() {
@@ -103,7 +103,7 @@ public class ApiTestRunner extends InjectBasedRunner {
     @Override
     protected List<TestRule> getTestRules(Object target) {
         List<TestRule> rules = new ArrayList<>();
-        rules.add(removeAllData);
+//        rules.add(removeAllData);
         rules.addAll(super.getTestRules(target));
         return rules;
     }
