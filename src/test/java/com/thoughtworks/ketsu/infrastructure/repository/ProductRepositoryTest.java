@@ -4,6 +4,7 @@ import com.mongodb.DB;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import com.thoughtworks.ketsu.domain.product.Product;
 import com.thoughtworks.ketsu.domain.product.ProductRepository;
 import com.thoughtworks.ketsu.support.DatabaseTestRunner;
 import com.thoughtworks.ketsu.support.TestHelper;
@@ -49,8 +50,8 @@ public class ProductRepositoryTest {
 
     @Test
     public void should_save_product(){
-        DBCursor dbCursor = productRepository.save(TestHelper.productMap("apple"), db);
-        assertThat(dbCursor.size(), is(1));
+        Product product = productRepository.save(TestHelper.productMap("apple"));
+        assertThat(product.getName(), is("apple"));
     }
 
     @After

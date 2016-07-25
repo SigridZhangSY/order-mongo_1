@@ -1,6 +1,6 @@
 package com.thoughtworks.ketsu.domain.product;
 
-import com.mongodb.DBObject;
+import com.mongodb.*;
 import com.thoughtworks.ketsu.infrastructure.records.Record;
 import com.thoughtworks.ketsu.web.jersey.Routes;
 
@@ -11,14 +11,18 @@ public class Product  {
     private String id;
     private String name;
     private String description;
-    private float price;
+    private double price;
 
-    public Product(DBObject obj){
-        this.id = obj.get("_id").toString();
-        this.name = obj.get("name").toString();
-        this.description = obj.get("description").toString();
-        this.price = Float.valueOf(obj.get("price").toString());
+    private MongoClient mongoClient;
 
+    public Product(){
+
+    }
+    public Product(BasicDBObject obj){
+        this.id = obj.getObjectId("_id").toString();
+        this.name = obj.getString("name");
+        this.description = obj.getString("description");
+        this.price = obj.getDouble("price");
     }
 
 
@@ -34,7 +38,7 @@ public class Product  {
         return description;
     }
 
-    public float getPrice() {
+    public double getPrice() {
         return price;
     }
 

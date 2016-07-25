@@ -6,5 +6,5 @@ import com.mongodb.DBCursor;
 import java.util.Map;
 
 public interface ProductRepository {
-    DBCursor save(Map<String, Object> info, DB db);
+    Product save(Map<String, Object> info);
 }

@@ -3,6 +3,7 @@ package com.thoughtworks.ketsu.web;
 import com.mongodb.*;
 import com.thoughtworks.ketsu.domain.product.Product;
 import com.thoughtworks.ketsu.domain.product.ProductRepository;
+import com.thoughtworks.ketsu.web.exception.InvalidParameterException;
 import com.thoughtworks.ketsu.web.jersey.Routes;
 import org.apache.ibatis.annotations.Param;
 
@@ -13,6 +14,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Path("products")
@@ -24,28 +27,17 @@ public class ProductApi {
     public Response postProduct(@Context ProductRepository productRepository,
                                 @Context Routes routes,
                                 Map<String,Object> info) throws UnknownHostException {
+        List<String> list = new ArrayList<>();
+        if(info.getOrDefault("name", "").toString().trim().isEmpty())
+            list.add("name");
+        if(info.getOrDefault("description", "").toString().trim().isEmpty())
+            list.add("description");
+        if(info.getOrDefault("price", "").toString().trim().isEmpty())
+            list.add("price");
+        if (list.size() > 0)
+            throw new InvalidParameterException(list);
 
-
-        String dbname = System.getenv().getOrDefault("MONGODB_DATABASE", "mongodb_store");
-        String host = System.getenv().getOrDefault("MONGODB_HOST", "localhost");
-        String username = System.getenv().getOrDefault("MONGODB_USER", "admin");
-        String password = System.getenv().getOrDefault("MONGODB_PASS", "mypass");
-        String connectURL = String.format(
-                "mongodb://%s:%s@%s/%s",
-                username,
-                password,
-                host,
-                dbname
-        );
-        MongoClient mongoClient = new MongoClient(
-                new MongoClientURI(connectURL)
-        );
-
-        DB db = mongoClient.getDB("mongodb_store");
-
-        DBCursor dbCursor = productRepository.save(info, db);
-        DBObject obj = dbCursor.next();
-        Product product = new Product(obj);
+        Product product = productRepository.save(info);
         return Response.created(routes.productUri(product)).build();
     }
 }
