@@ -15,6 +15,9 @@ import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 
+import java.net.UnknownHostException;
+import java.util.List;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -49,9 +52,18 @@ public class ProductRepositoryTest {
     ProductRepository productRepository;
 
     @Test
-    public void should_save_product(){
+    public void should_save_product() throws UnknownHostException {
         Product product = productRepository.save(TestHelper.productMap("apple"));
         assertThat(product.getName(), is("apple"));
+        TestHelper.clean("products");
+    }
+
+    @Test
+    public void should_list_products() throws UnknownHostException {
+        Product product = productRepository.save(TestHelper.productMap("apple"));
+        List<Product> list = productRepository.list();
+        assertThat(list.size(), is(1));
+        TestHelper.clean("products");
     }
 
     @After

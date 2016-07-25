@@ -5,6 +5,8 @@ import com.thoughtworks.ketsu.domain.product.Product;
 import org.bson.types.ObjectId;
 
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class ProductRepository implements com.thoughtworks.ketsu.domain.product.ProductRepository {
@@ -12,7 +14,7 @@ public class ProductRepository implements com.thoughtworks.ketsu.domain.product.
     private MongoClient mongoClient;
 
     public ProductRepository() throws UnknownHostException {
-        this.mongoClient = new DataBaseConnect().getMongoClient();
+        mongoClient = new DataBaseConnect().getMongoClient();
         this.db = mongoClient.getDB("mongodb_store");
     }
 
@@ -31,9 +33,22 @@ public class ProductRepository implements com.thoughtworks.ketsu.domain.product.
         DBObject obj = table.find(searchQuery).next();
         Product product = new Product((BasicDBObject) obj);
 
-        new DataBaseConnect().close(mongoClient);
+//        new DataBaseConnect().close(mongoClient);
 
 
         return product;
     }
+
+    @Override
+    public List<Product> list() {
+        DBCollection table = db.getCollection("products");
+        DBCursor cursor = table.find();
+        List<Product> productList = new ArrayList<>();
+        while (cursor.hasNext()){
+            productList.add(new Product((BasicDBObject) cursor.next()));
+        }
+        return productList;
+    }
+
+
 }

@@ -1,5 +1,8 @@
 package com.thoughtworks.ketsu.support;
 
+import com.mongodb.*;
+
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,5 +58,26 @@ public class TestHelper {
             put("pay_type", "CASH");
             put("amount", 100);
         }};
+    }
+
+    public static void clean(String tableName) throws UnknownHostException {
+        String dbname = System.getenv().getOrDefault("MONGODB_DATABASE", "mongodb_store");
+        String host = System.getenv().getOrDefault("MONGODB_HOST", "localhost");
+        String username = System.getenv().getOrDefault("MONGODB_USER", "admin");
+        String password = System.getenv().getOrDefault("MONGODB_PASS", "mypass");
+        String connectURL = String.format(
+                "mongodb://%s:%s@%s/%s",
+                username,
+                password,
+                host,
+                dbname
+        );
+        MongoClient mongoClient = new MongoClient(
+                new MongoClientURI(connectURL)
+        );
+        DB db = mongoClient.getDB("mongodb_store");
+        BasicDBObject removeQuery = new BasicDBObject();
+        db.getCollection(tableName).remove(removeQuery);
+        mongoClient.close();
     }
 }

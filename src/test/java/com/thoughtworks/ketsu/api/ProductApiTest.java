@@ -5,11 +5,13 @@ import com.thoughtworks.ketsu.domain.product.ProductRepository;
 import com.thoughtworks.ketsu.support.ApiSupport;
 import com.thoughtworks.ketsu.support.ApiTestRunner;
 import com.thoughtworks.ketsu.support.TestHelper;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
+import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -23,10 +25,11 @@ public class ProductApiTest extends ApiSupport{
     ProductRepository productRepository;
 
     @Test
-    public void should_return_201_when_post(){
+    public void should_return_201_when_post() throws UnknownHostException {
         Response post = post("products", TestHelper.productMap("apple"));
         assertThat(post.getStatus(), is(201));
         assertThat(Pattern.matches(".*/products/.*", post.getLocation().toASCIIString()), is(true));
+        TestHelper.clean("products");
     }
 
     @Test
@@ -43,5 +46,13 @@ public class ProductApiTest extends ApiSupport{
         Response get = get("products");
         assertThat(get.getStatus(), is(200));
     }
+
+    @Test
+    public void should_find_by_id(){
+        Product product = productRepository.save(TestHelper.productMap("apple"));
+        Response get = get("products/" + product.getId());
+        assertThat(get.getStatus(), is(200));
+    }
+
 
 }
