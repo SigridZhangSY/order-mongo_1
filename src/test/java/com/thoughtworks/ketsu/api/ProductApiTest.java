@@ -12,6 +12,8 @@ import org.junit.runner.RunWith;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -42,9 +44,15 @@ public class ProductApiTest extends ApiSupport{
 
 
     @Test
-    public void should_return_200_when_list_products(){
+    public void should_return_detail_when_list_products() throws UnknownHostException {
+        Product product = productRepository.save(TestHelper.productMap("name"));
         Response get = get("products");
         assertThat(get.getStatus(), is(200));
+        final List<Map<String, Object>> list = get.readEntity(List.class);
+        assertThat(list.size(), is(1));
+        assertThat(list.get(0).get("uri"), is("/products/" + product.getId()));
+        TestHelper.clean("products");
+
     }
 
     @Test

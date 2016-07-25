@@ -41,13 +41,9 @@ public class ProductApi {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String listProducts(){
-        return "OK";
+    public List<Product> listProducts(@Context ProductRepository productRepository){
+        return productRepository.list();
     }
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public String findProductById(){
-        return "OK";
-    }
+
 }

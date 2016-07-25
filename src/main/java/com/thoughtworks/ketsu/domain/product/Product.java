@@ -7,7 +7,7 @@ import com.thoughtworks.ketsu.web.jersey.Routes;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Product  {
+public class Product implements Record{
     private String id;
     private String name;
     private String description;
@@ -42,5 +42,25 @@ public class Product  {
         return price;
     }
 
+    @Override
+    public Map<String, Object> toRefJson(Routes routes) {
+        return new HashMap<String, Object>(){{
+            put("id", id);
+            put("uri", routes.productUri(Product.this));
+            put("name", name);
+            put("description", description);
+            put("price", price);
+        }};
+    }
+
+    @Override
+    public Map<String, Object> toJson(Routes routes) {
+        return new HashMap<String, Object>(){{
+            put("uri", routes.productUri(Product.this));
+            put("name", name);
+            put("description", description);
+            put("price", price);
+        }};
+    }
 
 }
