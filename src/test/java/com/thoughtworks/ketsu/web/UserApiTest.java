@@ -72,4 +72,12 @@ public class UserApiTest extends ApiSupport{
         final Map<String, Object> map = get.readEntity(Map.class);
         assertThat(map.get("uri"), is("/users/" + user.getId() + "/orders/" + order.getId()));
     }
+
+    @Test
+    public void should_return_404_when_order_not_exist(){
+        User user = userRepository.createUser(TestHelper.userMap("xxx")).get();
+        Response get = get("users/" + user.getId() + "/orders/1");
+        assertThat(get.getStatus(), is(404));
+
+    }
 }

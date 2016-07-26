@@ -12,6 +12,7 @@ import com.thoughtworks.ketsu.web.jersey.Routes;
 import org.bson.types.ObjectId;
 
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -66,7 +67,6 @@ public class User implements Record{
 
     public Optional<Order> findOrder(String id){
         BasicDBObject obj = findOrderById(id);
-
         return Optional.ofNullable(dbobjToOrder(obj));
     }
 
@@ -108,7 +108,14 @@ public class User implements Record{
 
     private BasicDBObject findOrderById(String id){
         BasicDBObject document = new BasicDBObject();
-        document.put("_id", new ObjectId(id));
+        ObjectId objectId;
+        try{
+            objectId = new ObjectId(id);
+        } catch (Exception e){
+            throw new NotFoundException("can not find order by id.");
+        }
+
+        document.put("_id", objectId);
        return  (BasicDBObject) db.getCollection("orders").findOne(document);
     }
 

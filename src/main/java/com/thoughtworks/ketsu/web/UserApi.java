@@ -68,6 +68,6 @@ public class UserApi {
     @Path("orders/{orderId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Order findOrderById(@PathParam("orderId") String orderId){
-        return user.findOrder(orderId).get();
+        return user.findOrder(orderId).orElseThrow(() -> new NotFoundException("can not find order by id."));
     }
 }
