@@ -34,6 +34,7 @@ public class ApiTestRunner extends InjectBasedRunner {
             try {
                 base.evaluate();
             } finally {
+                db.getCollection("users").remove(new BasicDBObject());
                 db.getCollection("products").remove(new BasicDBObject());
             }
         }
