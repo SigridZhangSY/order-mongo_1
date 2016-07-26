@@ -1,12 +1,10 @@
 package com.thoughtworks.ketsu.domain.user;
 
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
+import com.mongodb.*;
 import com.thoughtworks.ketsu.domain.order.Order;
 import com.thoughtworks.ketsu.domain.order.OrderItem;
+import com.thoughtworks.ketsu.domain.product.Product;
 import com.thoughtworks.ketsu.domain.product.ProductRepository;
 import com.thoughtworks.ketsu.infrastructure.records.Record;
 import com.thoughtworks.ketsu.web.jersey.Routes;
@@ -49,33 +47,34 @@ public class User implements Record{
         if(obj == null)
             return Optional.of(null);
         else {
-            Map<String, Object> map = obj.toMap();
-            Order order = mapToOrder(map);
-            return Optional.of(order);
+            return Optional.of(dbobjToOrder(obj));
         }
     }
 
-    private Order mapToOrder(Map<String, Object> map) throws ParseException {
+    public List<Order> listOrders() throws ParseException {
+        DBCollection table = db.getCollection("orders");
+        BasicDBObject document = new BasicDBObject();
+        document.put("user_id", id);
+        DBCursor cursor = table.find();
+        List<Order> orderList = new ArrayList<>();
+        while (cursor.hasNext()){
+            orderList.add(dbobjToOrder((BasicDBObject) cursor.next()));
+        }
+        return orderList;
+    }
 
-        List<Map> orderItems = (List) map.get("order_items");
-        List<OrderItem> orderItemList = orderItems.stream().map(
-                item -> new OrderItem(
-                        item.get("product_id").toString(),
-                        Integer.valueOf(item.get("quantity").toString()),
-                        Double.valueOf(item.get("amount").toString())
-                )).collect(Collectors.toList());
-        DateFormat format = new SimpleDateFormat("E MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
-        Date date = format.parse(map.get("date").toString());
-        Order order = new Order(map.get("name").toString(),
-                map.get("user_id").toString(),
-                map.get("name").toString(),
-                map.get("address").toString(),
-                map.get("phone").toString(),
-                Double.valueOf(map.get("total_price").toString()),
-                date,
-                orderItemList
-                );
-        return order;
+    @Override
+    public Map<String, Object> toRefJson(Routes routes) {
+        return toJson(routes);
+    }
+
+    @Override
+    public Map<String, Object> toJson(Routes routes) {
+        return new HashMap<String, Object>(){{
+            put("id", String.valueOf(id));
+            put("uri", routes.userUri(User.this));
+            put("name", name);
+        }};
     }
 
     private String saveOrder(Map<String, Object> info){
@@ -93,8 +92,6 @@ public class User implements Record{
             total_price += price;
         }
         document.put("total_price", total_price);
-        Date date = new Date();
-        document.put("date", date);
         document.put("order_items", items);
 
         DBCollection table = db.getCollection("orders");
@@ -105,20 +102,33 @@ public class User implements Record{
     private BasicDBObject findOrderById(String id){
         BasicDBObject document = new BasicDBObject();
         document.put("_id", new ObjectId(id));
-        return (BasicDBObject) db.getCollection("orders").findOne(document);
+       return  (BasicDBObject) db.getCollection("orders").findOne(document);
     }
 
-    @Override
-    public Map<String, Object> toRefJson(Routes routes) {
-        return toJson(routes);
+    private Order dbobjToOrder(BasicDBObject obj){
+        ObjectId objectId = obj.getObjectId("_id");
+        Date date = objectId.getDate();
+        Map<String, Object> map = obj.toMap();
+
+        List<Map> orderItems = (List) map.get("order_items");
+        List<OrderItem> orderItemList = orderItems.stream().map(
+                item -> new OrderItem(
+                        item.get("product_id").toString(),
+                        Integer.valueOf(item.get("quantity").toString()),
+                        Double.valueOf(item.get("amount").toString())
+                )).collect(Collectors.toList());
+        Order order = new Order(map.get("name").toString(),
+                map.get("user_id").toString(),
+                map.get("name").toString(),
+                map.get("address").toString(),
+                map.get("phone").toString(),
+                Double.valueOf(map.get("total_price").toString()),
+                date,
+                orderItemList
+        );
+
+        return order;
     }
 
-    @Override
-    public Map<String, Object> toJson(Routes routes) {
-        return new HashMap<String, Object>(){{
-            put("id", String.valueOf(id));
-            put("uri", routes.userUri(User.this));
-            put("name", name);
-        }};
-    }
+
 }

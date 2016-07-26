@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 import java.text.ParseException;
+import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -32,6 +33,15 @@ public class UserTest {
         Product product = productRepository.save(TestHelper.productMap("apple"));
         Optional<Order> order = user.createOrder(TestHelper.orderMap(product.getId()));
         assertThat(order.isPresent(), is(true));
+    }
+
+    @Test
+    public void should_list_orders_for_user() throws ParseException {
+        User user = userRepository.createUser(TestHelper.userMap("xxx")).get();
+        Product product = productRepository.save(TestHelper.productMap("apple"));
+        Order order = user.createOrder(TestHelper.orderMap(product.getId())).get();
+        List<Order> orderList = user.listOrders();
+        assertThat(orderList.size(), is(1));
     }
 
 }
