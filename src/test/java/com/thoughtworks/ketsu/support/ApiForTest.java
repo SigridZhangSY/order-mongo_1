@@ -10,10 +10,7 @@ public class ApiForTest extends ResourceConfig {
         property(org.glassfish.jersey.server.ServerProperties.RESPONSE_SET_STATUS_OVER_SEND_ERROR, true);
         packages("com.thoughtworks.ketsu.web");
         register(RoutesFeature.class);
-//        register(LoggingFilter.class);
-//        register(CORSResponseFilter.class);
-//        register(OpenSessionInViewRequestFilter.class);
-//        register(OpenSessionInViewResponseFilter.class);
+
         register(new AbstractBinder() {
             @Override
             protected void configure() {

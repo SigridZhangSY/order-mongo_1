@@ -31,10 +31,10 @@ public class UsersApi {
         return Response.created(routes.userUri(user)).build();
     }
 
-    @GET
+
     @Path("{userId}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public String getUser(){
-        return "OK";
+    public UserApi getUser(@PathParam("userId") String id,
+                        @Context UserRepository userRepository){
+        return new UserApi(userRepository.findById(id).get());
     }
 }
