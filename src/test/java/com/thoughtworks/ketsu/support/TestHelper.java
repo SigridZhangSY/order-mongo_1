@@ -41,7 +41,7 @@ public class TestHelper {
         }};
     }
 
-    public static Map<String, Object> orderMap( long productId){
+    public static Map<String, Object> orderMap( String productId){
         return new HashMap<String, Object>(){{
             put("name", "kayla");
             put("address", "beijing");

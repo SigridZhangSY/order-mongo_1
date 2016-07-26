@@ -11,4 +11,5 @@ public interface ProductRepository {
     Product save(Map<String, Object> info);
     List<Product> list();
     Optional<Product> find(String id);
-}
+
+    }
