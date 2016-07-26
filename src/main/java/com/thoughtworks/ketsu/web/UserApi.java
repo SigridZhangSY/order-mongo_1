@@ -70,4 +70,11 @@ public class UserApi {
     public Order findOrderById(@PathParam("orderId") String orderId){
         return user.findOrder(orderId).orElseThrow(() -> new NotFoundException("can not find order by id."));
     }
+
+    @POST
+    @Path("orders/{orderId}/payments")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createOrder(){
+        return Response.status(201).build();
+    }
 }

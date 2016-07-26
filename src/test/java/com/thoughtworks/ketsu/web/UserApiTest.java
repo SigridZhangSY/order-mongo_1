@@ -78,6 +78,14 @@ public class UserApiTest extends ApiSupport{
         User user = userRepository.createUser(TestHelper.userMap("xxx")).get();
         Response get = get("users/" + user.getId() + "/orders/1");
         assertThat(get.getStatus(), is(404));
+    }
 
+    @Test
+    public void should_return_201_when_post_payment(){
+        User user = userRepository.createUser(TestHelper.userMap("xxx")).get();
+        Product product = productRepository.save(TestHelper.productMap("apple"));
+        Order order = user.createOrder(TestHelper.orderMap(product.getId())).get();
+        Response post = post("users/" + user.getId() + "/orders/" + order.getId() + "/payments", new HashMap<String, Object>());
+        assertThat(post.getStatus(), is(201));
     }
 }
