@@ -15,6 +15,8 @@ import org.junit.runner.RunWith;
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -34,5 +36,17 @@ public class UserApiTest extends ApiSupport{
         Product product = productRepository.save(TestHelper.productMap("apple"));
         Response post = post("users/" + user.getId() + "/orders", TestHelper.orderMap(product.getId()));
         assertThat(post.getStatus(), is(201));
+    }
+
+    @Test
+    public void should_return_400_when_create_order_with_name_is_empty(){
+        User user = userRepository.createUser(TestHelper.userMap("xxx")).get();
+        Product product = productRepository.save(TestHelper.productMap("apple"));
+        Map<String, Object> map = TestHelper.orderMap(product.getId());
+        map.remove("name");
+        Response post = post("users/" + user.getId() + "/orders", map);
+        assertThat(post.getStatus(), is(400));
+        final List<Map<String, Object>> list = post.readEntity(List.class);
+        assertThat(list.size(), is(1));
     }
 }
