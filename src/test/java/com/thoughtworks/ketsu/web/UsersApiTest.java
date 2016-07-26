@@ -10,6 +10,8 @@ import org.junit.runner.RunWith;
 import javax.ws.rs.core.Response;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -25,5 +27,12 @@ public class UsersApiTest extends ApiSupport {
         assertThat(Pattern.matches(".*/users/.*", post.getLocation().toASCIIString()), is(true));
     }
 
+    @Test
+    public void should_return_400_when_post_user_with_invalid_parameter(){
+        Response post = post("users", new HashMap<String, Object>());
+        assertThat(post.getStatus(), is(400));
+        final List<Map<String, Object>> list = post.readEntity(List.class);
+        assertThat(list.size(), is(1));
+    }
 
 }
