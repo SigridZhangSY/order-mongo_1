@@ -5,6 +5,7 @@ import com.thoughtworks.ketsu.domain.user.User;
 import org.bson.types.ObjectId;
 
 import javax.inject.Inject;
+import javax.ws.rs.NotFoundException;
 import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Optional;
@@ -29,7 +30,13 @@ public class UserRepository implements com.thoughtworks.ketsu.domain.user.UserRe
 
     @Override
     public Optional<User> findById(String id) {
+        ObjectId objectId;
         BasicDBObject searchQuery = new BasicDBObject();
+        try{
+            objectId = new ObjectId(id);
+        } catch (Exception e){
+            throw new NotFoundException("can not find user by id");
+        }
         searchQuery.put("_id", new ObjectId(id));
         return Optional.ofNullable(new User((BasicDBObject) db.getCollection("users").find(searchQuery).next()));
     }

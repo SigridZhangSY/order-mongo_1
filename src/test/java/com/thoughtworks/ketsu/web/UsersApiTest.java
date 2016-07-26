@@ -52,4 +52,10 @@ public class UsersApiTest extends ApiSupport {
         assertThat(fetch.get("uri"), is("/users/" + user.getId()));
     }
 
+    @Test
+    public void should_return_404_when_user_not_exist(){
+        Response get = get("users/1");
+        assertThat(get.getStatus(), is(404));
+    }
+
 }
