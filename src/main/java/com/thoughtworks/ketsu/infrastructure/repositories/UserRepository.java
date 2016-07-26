@@ -26,4 +26,11 @@ public class UserRepository implements com.thoughtworks.ketsu.domain.user.UserRe
         DBObject obj = table.find(searchQuery).next();
         return Optional.ofNullable(new User((BasicDBObject) obj));
     }
+
+    @Override
+    public Optional<User> findById(String id) {
+        BasicDBObject searchQuery = new BasicDBObject();
+        searchQuery.put("_id", new ObjectId(id));
+        return Optional.ofNullable(new User((BasicDBObject) db.getCollection("users").find(searchQuery).next()));
+    }
 }
