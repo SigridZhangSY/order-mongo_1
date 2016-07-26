@@ -1,6 +1,8 @@
 package com.thoughtworks.ketsu.support;
 
 import com.google.inject.AbstractModule;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionManager;
@@ -23,28 +25,32 @@ public class ApiTestRunner extends InjectBasedRunner {
     @Inject
     private SqlSessionManager sqlSessionManager;
 
+    @Inject
+    DB db;
+
     public ApiTestRunner(Class<?> klass) throws InitializationError {
         super(klass);
     }
 
-//    private final TestRule removeAllData = (base, description) -> new Statement() {
-//        @Override
-//        public void evaluate() throws Throwable {
-//            try {
-//                base.evaluate();
-//            } finally {
+    private final TestRule removeAllData = (base, description) -> new Statement() {
+        @Override
+        public void evaluate() throws Throwable {
+            try {
+                base.evaluate();
+            } finally {
 //                SqlSession sqlSession = sqlSessionFactory.openSession();
-////                Connection connection = sqlSession.getConnection();
-////                java.sql.Statement statement = connection.createStatement();
-//                // Take care of the order for delete operations, eg.
-//                // field in table A has reference for table B, then A should be deleted first
-//                // otherwise exception will occur and database will be broken,
-//                // remember to clean database manually before running tests when exception happens
-////                statement.close();
-////                connection.commit();
-//            }
-//        }
-//    };
+//                Connection connection = sqlSession.getConnection();
+//                java.sql.Statement statement = connection.createStatement();
+                // Take care of the order for delete operations, eg.
+                // field in table A has reference for table B, then A should be deleted first
+                // otherwise exception will occur and database will be broken,
+                // remember to clean database manually before running tests when exception happens
+//                statement.close();
+//                connection.commit();
+                db.getCollection("products").remove(new BasicDBObject());
+            }
+        }
+    };
 
     @Override
     protected List<AbstractModule> getModules() {
@@ -103,7 +109,7 @@ public class ApiTestRunner extends InjectBasedRunner {
     @Override
     protected List<TestRule> getTestRules(Object target) {
         List<TestRule> rules = new ArrayList<>();
-//        rules.add(removeAllData);
+       rules.add(removeAllData);
         rules.addAll(super.getTestRules(target));
         return rules;
     }

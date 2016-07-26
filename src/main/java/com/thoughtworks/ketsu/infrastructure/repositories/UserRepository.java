@@ -4,18 +4,14 @@ import com.mongodb.*;
 import com.thoughtworks.ketsu.domain.user.User;
 import org.bson.types.ObjectId;
 
+import javax.inject.Inject;
 import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Optional;
 
 public class UserRepository implements com.thoughtworks.ketsu.domain.user.UserRepository {
-    private DB db;
-    private MongoClient mongoClient;
-
-    public UserRepository() throws UnknownHostException {
-        mongoClient = new DataBaseConnect().getMongoClient();
-        this.db = mongoClient.getDB("mongodb_store");
-    }
+    @Inject
+    DB db;
 
     @Override
     public Optional<User> createUser(Map<String, Object> info) {

@@ -23,6 +23,7 @@ public class UsersApiTest extends ApiSupport {
         Response post = post("users", TestHelper.userMap("xxx"));
         assertThat(post.getStatus(), is(201));
         assertThat(Pattern.matches(".*/users/.*", post.getLocation().toASCIIString()), is(true));
-        TestHelper.clean("users");
     }
+
+
 }

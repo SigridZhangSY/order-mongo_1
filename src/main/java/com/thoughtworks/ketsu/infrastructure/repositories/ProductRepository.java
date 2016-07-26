@@ -4,6 +4,7 @@ import com.mongodb.*;
 import com.thoughtworks.ketsu.domain.product.Product;
 import org.bson.types.ObjectId;
 
+import javax.inject.Inject;
 import javax.ws.rs.NotFoundException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -12,13 +13,9 @@ import java.util.Map;
 import java.util.Optional;
 
 public class ProductRepository implements com.thoughtworks.ketsu.domain.product.ProductRepository {
-    private DB db;
-    private MongoClient mongoClient;
 
-    public ProductRepository() throws UnknownHostException {
-        mongoClient = new DataBaseConnect().getMongoClient();
-        this.db = mongoClient.getDB("mongodb_store");
-    }
+    @Inject
+    DB db;
 
     @Override
     public Product save(Map<String, Object> info) {
@@ -34,9 +31,6 @@ public class ProductRepository implements com.thoughtworks.ketsu.domain.product.
         searchQuery.put("_id", id);
         DBObject obj = table.find(searchQuery).next();
         Product product = new Product((BasicDBObject) obj);
-
-//        new DataBaseConnect().close(mongoClient);
-
 
         return product;
     }

@@ -29,7 +29,7 @@ public class ProductsApiTest extends ApiSupport{
         Response post = post("products", TestHelper.productMap("apple"));
         assertThat(post.getStatus(), is(201));
         assertThat(Pattern.matches(".*/products/.*", post.getLocation().toASCIIString()), is(true));
-        TestHelper.clean("products");
+//        TestHelper.clean("products");
     }
 
     @Test
@@ -49,7 +49,6 @@ public class ProductsApiTest extends ApiSupport{
         final List<Map<String, Object>> list = get.readEntity(List.class);
         assertThat(list.size(), is(1));
         assertThat(list.get(0).get("uri"), is("/products/" + product.getId()));
-        TestHelper.clean("products");
 
     }
 
@@ -60,15 +59,12 @@ public class ProductsApiTest extends ApiSupport{
         assertThat(get.getStatus(), is(200));
         final Map<String, Object> map = get.readEntity(Map.class);
         assertThat(map.get("uri").toString(), is("/products/" + product.getId()));
-        TestHelper.clean("products");
     }
 
     @Test
     public void should_return_404_when_product_not_exist() throws UnknownHostException {
-        Product product = productRepository.save(TestHelper.productMap("apple"));
         Response get = get("products/1");
         assertThat(get.getStatus(), is(404));
-        TestHelper.clean("products");
     }
 
 }

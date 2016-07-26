@@ -51,6 +51,6 @@ public class UserRepositoryTest {
     public void should_save_user() throws UnknownHostException {
         Optional<User> user = userRepository.createUser(TestHelper.userMap("xxx"));
         assertThat(user.isPresent(), is(true));
-        TestHelper.clean("users");
+//        TestHelper.clean("users");
     }
 }

@@ -2,6 +2,10 @@ package com.thoughtworks.ketsu.infrastructure.records;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
+import com.mongodb.DB;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
+import com.thoughtworks.ketsu.MainServer;
 import com.thoughtworks.ketsu.domain.product.ProductRepository;
 import com.thoughtworks.ketsu.domain.user.UserRepository;
 import org.apache.ibatis.plugin.Interceptor;
@@ -12,7 +16,9 @@ import org.mybatis.guice.session.SqlSessionManagerProvider;
 import org.mybatis.guice.transactional.Transactional;
 import org.mybatis.guice.transactional.TransactionalMethodInterceptor;
 
+import javax.ws.rs.core.Application;
 import java.io.Reader;
+import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Properties;
 
@@ -50,6 +56,32 @@ public class Models extends AbstractModule {
 
     @Override
     protected void configure() {
+
+        String dbname = System.getenv().getOrDefault("MONGODB_DATABASE", "mongodb_store");
+        String host = System.getenv().getOrDefault("MONGODB_HOST", "localhost");
+        String username = System.getenv().getOrDefault("MONGODB_USER", "admin");
+        String password = System.getenv().getOrDefault("MONGODB_PASS", "mypass");
+        String connectURL = String.format(
+                "mongodb://%s:%s@%s/%s",
+                username,
+                password,
+                host,
+                dbname
+        );
+
+        properties.setProperty("db.url", connectURL);
+        MongoClient mongoClient = null;
+        try {
+            mongoClient = new MongoClient(
+                    new MongoClientURI(connectURL)
+            );
+        }catch (UnknownHostException e){
+            e.printStackTrace();
+        }
+
+        DB db = mongoClient.getDB("mongodb_store");
+        bind(DB.class).toInstance(db);
+
         bindPersistence();
         bind(ProductRepository.class).to(com.thoughtworks.ketsu.infrastructure.repositories.ProductRepository.class);
         bind(UserRepository.class).to(com.thoughtworks.ketsu.infrastructure.repositories.UserRepository.class);
