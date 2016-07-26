@@ -35,4 +35,10 @@ public class UsersApiTest extends ApiSupport {
         assertThat(list.size(), is(1));
     }
 
+    @Test
+    public void should_return_200_when_find_user(){
+        Response get = get("users/1");
+        assertThat(get.getStatus(), is(200));
+    }
+
 }
