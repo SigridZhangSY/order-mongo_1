@@ -66,11 +66,8 @@ public class User implements Record{
 
     public Optional<Order> findOrder(String id){
         BasicDBObject obj = findOrderById(id);
-        if(obj == null)
-            return Optional.of(null);
-        else {
-            return Optional.of(dbobjToOrder(obj));
-        }
+
+        return Optional.ofNullable(dbobjToOrder(obj));
     }
 
     @Override
@@ -116,6 +113,8 @@ public class User implements Record{
     }
 
     private Order dbobjToOrder(BasicDBObject obj){
+        if(obj == null)
+            return null;
         ObjectId objectId = obj.getObjectId("_id");
         Date date = objectId.getDate();
         Map<String, Object> map = obj.toMap();
