@@ -28,7 +28,7 @@ public class UserTest {
     UserRepository userRepository;
 
     @Test
-    public void should_create_order() throws ParseException {
+    public void should_create_order()  {
         User user = userRepository.createUser(TestHelper.userMap("xxx")).get();
         Product product = productRepository.save(TestHelper.productMap("apple"));
         Optional<Order> order = user.createOrder(TestHelper.orderMap(product.getId()));
@@ -36,7 +36,7 @@ public class UserTest {
     }
 
     @Test
-    public void should_list_orders_for_user() throws ParseException {
+    public void should_list_orders_for_user() {
         User user = userRepository.createUser(TestHelper.userMap("xxx")).get();
         Product product = productRepository.save(TestHelper.productMap("apple"));
         Order order = user.createOrder(TestHelper.orderMap(product.getId())).get();

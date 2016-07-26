@@ -1,6 +1,7 @@
 package com.thoughtworks.ketsu.web;
 
 
+import com.thoughtworks.ketsu.domain.order.Order;
 import com.thoughtworks.ketsu.domain.product.Product;
 import com.thoughtworks.ketsu.domain.product.ProductRepository;
 import com.thoughtworks.ketsu.domain.user.User;
@@ -53,8 +54,12 @@ public class UserApiTest extends ApiSupport{
     @Test
     public void should_return_200_when_list_order(){
         User user = userRepository.createUser(TestHelper.userMap("xxx")).get();
+        Product product = productRepository.save(TestHelper.productMap("apple"));
+        Order order = user.createOrder(TestHelper.orderMap(product.getId())).get();
         Response get = get("users/" + user.getId() + "/orders");
         assertThat(get.getStatus(), is(200));
+        final List<Map<String, Object>> list = get.readEntity(List.class);
+        assertThat(list.size(), is(1));
 
     }
 }

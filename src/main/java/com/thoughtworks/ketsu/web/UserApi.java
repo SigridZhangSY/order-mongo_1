@@ -60,8 +60,8 @@ public class UserApi {
     @GET
     @Path("orders")
     @Produces(MediaType.APPLICATION_JSON)
-    public String listOrder(){
-        return "OK";
+    public List<Order> listOrder(){
+        return user.listOrders();
     }
 
 }

@@ -41,7 +41,7 @@ public class User implements Record{
         this.name = name;
     }
 
-    public Optional<Order> createOrder(Map<String, Object> info) throws ParseException {
+    public Optional<Order> createOrder(Map<String, Object> info){
         String id = saveOrder(info);
         BasicDBObject obj = findOrderById(id);
         if(obj == null)
@@ -51,7 +51,7 @@ public class User implements Record{
         }
     }
 
-    public List<Order> listOrders() throws ParseException {
+    public List<Order> listOrders() {
         DBCollection table = db.getCollection("orders");
         BasicDBObject document = new BasicDBObject();
         document.put("user_id", id);
