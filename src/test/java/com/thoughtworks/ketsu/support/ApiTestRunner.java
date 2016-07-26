@@ -19,11 +19,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class ApiTestRunner extends InjectBasedRunner {
-    @Inject
-    private SqlSessionFactory sqlSessionFactory;
 
-    @Inject
-    private SqlSessionManager sqlSessionManager;
 
     @Inject
     DB db;
@@ -38,15 +34,6 @@ public class ApiTestRunner extends InjectBasedRunner {
             try {
                 base.evaluate();
             } finally {
-//                SqlSession sqlSession = sqlSessionFactory.openSession();
-//                Connection connection = sqlSession.getConnection();
-//                java.sql.Statement statement = connection.createStatement();
-                // Take care of the order for delete operations, eg.
-                // field in table A has reference for table B, then A should be deleted first
-                // otherwise exception will occur and database will be broken,
-                // remember to clean database manually before running tests when exception happens
-//                statement.close();
-//                connection.commit();
                 db.getCollection("products").remove(new BasicDBObject());
             }
         }
@@ -58,50 +45,6 @@ public class ApiTestRunner extends InjectBasedRunner {
 
             @Override
             protected void configure() {
-                bind(TransactionManager.class).toInstance(new TransactionManager() {
-                    @Override
-                    public <T> void commit(T parameter, Consumer<T> consumer) {
-                        sqlSessionManager.startManagedSession();
-                        try {
-                            consumer.accept(parameter);
-                            sqlSessionManager.commit();
-                        } catch (Exception e) {
-                            sqlSessionManager.rollback();
-                            throw e;
-                        } finally {
-                            sqlSessionManager.close();
-                        }
-                    }
-
-                    @Override
-                    public <T> T commit(Supplier<T> consumer) {
-                        sqlSessionManager.startManagedSession();
-                        try {
-                            T result = consumer.get();
-                            sqlSessionManager.commit();
-                            return result;
-                        } catch (Exception e) {
-                            sqlSessionManager.rollback();
-                            throw e;
-                        } finally {
-                            sqlSessionManager.close();
-                        }
-                    }
-
-                    @Override
-                    public <T> void commit(Consumer<T> consumer) {
-                        sqlSessionManager.startManagedSession();
-                        try {
-                            consumer.accept(null);
-                            sqlSessionManager.commit();
-                        } catch (Exception e) {
-                            sqlSessionManager.rollback();
-                            throw e;
-                        } finally {
-                            sqlSessionManager.close();
-                        }
-                    }
-                });
             }
         });
     }

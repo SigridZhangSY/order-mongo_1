@@ -34,7 +34,7 @@ public class ProductRepositoryTest {
         Product product = productRepository.save(TestHelper.productMap("apple"));
         assertThat(product.getName(), is("apple"));
         BasicDBObject removeQuery = new BasicDBObject();
-        db.getCollection("products").remove(removeQuery);
+//        db.getCollection("products").remove(removeQuery);
 //        TestHelper.clean("products");
     }
 
