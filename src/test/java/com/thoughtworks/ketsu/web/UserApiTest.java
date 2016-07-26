@@ -49,4 +49,12 @@ public class UserApiTest extends ApiSupport{
         final List<Map<String, Object>> list = post.readEntity(List.class);
         assertThat(list.size(), is(1));
     }
+
+    @Test
+    public void should_return_200_when_list_order(){
+        User user = userRepository.createUser(TestHelper.userMap("xxx")).get();
+        Response get = get("users/" + user.getId() + "/orders");
+        assertThat(get.getStatus(), is(200));
+
+    }
 }

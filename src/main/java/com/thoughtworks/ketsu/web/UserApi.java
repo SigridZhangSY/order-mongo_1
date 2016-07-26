@@ -6,10 +6,7 @@ import com.thoughtworks.ketsu.domain.user.User;
 import com.thoughtworks.ketsu.web.exception.InvalidParameterException;
 import com.thoughtworks.ketsu.web.jersey.Routes;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -32,6 +29,7 @@ public class UserApi {
 
     @POST
     @Path("orders")
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response createOrder(Map<String, Object> info,
                                 @Context Routes routes) throws ParseException {
         List<String> list = new ArrayList<>();
@@ -58,4 +56,12 @@ public class UserApi {
         Order order = user.createOrder(info).get();
         return Response.created(routes.orderUri(order)).build();
     }
+
+    @GET
+    @Path("orders")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String listOrder(){
+        return "OK";
+    }
+
 }
