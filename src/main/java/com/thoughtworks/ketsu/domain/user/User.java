@@ -2,6 +2,7 @@ package com.thoughtworks.ketsu.domain.user;
 
 
 import com.mongodb.*;
+import com.sun.org.apache.xpath.internal.operations.Or;
 import com.thoughtworks.ketsu.domain.order.Order;
 import com.thoughtworks.ketsu.domain.order.OrderItem;
 import com.thoughtworks.ketsu.domain.product.Product;
@@ -63,6 +64,15 @@ public class User implements Record{
         return orderList;
     }
 
+    public Optional<Order> findOrder(String id){
+        BasicDBObject obj = findOrderById(id);
+        if(obj == null)
+            return Optional.of(null);
+        else {
+            return Optional.of(dbobjToOrder(obj));
+        }
+    }
+
     @Override
     public Map<String, Object> toRefJson(Routes routes) {
         return toJson(routes);
@@ -117,7 +127,7 @@ public class User implements Record{
                         Integer.valueOf(item.get("quantity").toString()),
                         Double.valueOf(item.get("amount").toString())
                 )).collect(Collectors.toList());
-        Order order = new Order(map.get("name").toString(),
+        Order order = new Order(map.get("_id").toString(),
                 map.get("user_id").toString(),
                 map.get("name").toString(),
                 map.get("address").toString(),
