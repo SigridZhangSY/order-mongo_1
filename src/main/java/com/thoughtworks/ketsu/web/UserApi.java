@@ -92,4 +92,11 @@ public class UserApi {
         user.createPaymentForOrder(info, orderId);
         return Response.created(routes.paymentUri(user.getId(), orderId)).build();
     }
+
+    @GET
+    @Path("orders/{orderId}/payment")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Payment findOrder(@PathParam("orderId") String orderId){
+        return user.findOrder(orderId).get().getPayment();
+    }
 }

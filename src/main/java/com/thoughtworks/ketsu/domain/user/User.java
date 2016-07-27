@@ -85,8 +85,7 @@ public class User implements Record{
         payment.put("pay_type", info.get("pay_type").toString());
         payment.put("amount", Double.valueOf(info.get("amount").toString()));
         updatedValue.put("payment", payment);
-        WriteResult result = db.getCollection("orders").update(updateCondition, new BasicDBObject("$set",updatedValue));
-
+        db.getCollection("orders").update(updateCondition, new BasicDBObject("$set",updatedValue));
     }
 
     @Override
@@ -153,11 +152,23 @@ public class User implements Record{
                         Integer.valueOf(item.get("quantity").toString()),
                         Double.valueOf(item.get("amount").toString())
                 )).collect(Collectors.toList());
-        Map<String, Object> paymentMap = (Map)map.get("payment");
+
         Payment payment = null;
-        if(paymentMap != null)
-            payment = new Payment(paymentMap.get("pay_type").toString(), Double.valueOf(paymentMap.get("amount").toString()));
         Order order = new Order(map.get("_id").toString(),
+                map.get("user_id").toString(),
+                map.get("name").toString(),
+                map.get("address").toString(),
+                map.get("phone").toString(),
+                Double.valueOf(map.get("total_price").toString()),
+                date,
+                orderItemList,
+                payment
+        );
+
+        Map<String, Object> paymentMap = (Map)map.get("payment");
+        if(paymentMap != null)
+            payment = new Payment(paymentMap.get("pay_type").toString(), Double.valueOf(paymentMap.get("amount").toString()), order);
+        order = new Order(map.get("_id").toString(),
                 map.get("user_id").toString(),
                 map.get("name").toString(),
                 map.get("address").toString(),

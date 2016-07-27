@@ -10,6 +10,7 @@ import com.thoughtworks.ketsu.support.ApiSupport;
 import com.thoughtworks.ketsu.support.ApiTestRunner;
 import com.thoughtworks.ketsu.support.TestHelper;
 import org.bson.types.ObjectId;
+import org.glassfish.grizzly.http.util.HttpStatus;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -102,5 +103,15 @@ public class UserApiTest extends ApiSupport{
         assertThat(post.getStatus(), is(400));
         final List<Map<String, Object>> list = post.readEntity(List.class);
         assertThat(list.size(), is(1));
+    }
+
+    @Test
+    public void should_return_200_when_find_payment(){
+        User user = userRepository.createUser(TestHelper.userMap("xxx")).get();
+        Product product = productRepository.save(TestHelper.productMap("apple"));
+        Order order = user.createOrder(TestHelper.orderMap(product.getId())).get();
+        user.createPaymentForOrder(TestHelper.paymentMap(), order.getId());
+        Response get = get("users/" + user.getId() + "/orders/" + order.getId() + "/payment");
+        assertThat(get.getStatus(), is(200));
     }
 }
