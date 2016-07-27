@@ -73,11 +73,22 @@ public class UserApi {
     }
 
     @POST
-    @Path("orders/{orderId}/payments")
+    @Path("orders/{orderId}/payment")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createOrder(@Context Routes routes,
                                 @PathParam("orderId") String orderId,
                                 Map<String, Object> info){
+
+        System.out.println("get it");
+        List<String> list = new ArrayList<>();
+        if (info.getOrDefault("pay_type", "").toString().trim().isEmpty())
+            list.add("pay_type");
+        if (info.getOrDefault("amount", "").toString().trim().isEmpty())
+            list.add("amount");
+
+        if (list.size() > 0)
+            throw new InvalidParameterException(list);
+
         user.createPaymentForOrder(info, orderId);
         return Response.created(routes.paymentUri(user.getId(), orderId)).build();
     }

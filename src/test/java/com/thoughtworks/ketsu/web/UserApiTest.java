@@ -86,8 +86,21 @@ public class UserApiTest extends ApiSupport{
         User user = userRepository.createUser(TestHelper.userMap("xxx")).get();
         Product product = productRepository.save(TestHelper.productMap("apple"));
         Order order = user.createOrder(TestHelper.orderMap(product.getId())).get();
-        Response post = post("users/" + user.getId() + "/orders/" + order.getId() + "/payments", TestHelper.paymentMap());
+        Response post = post("users/" + user.getId() + "/orders/" + order.getId() + "/payment", TestHelper.paymentMap());
         assertThat(post.getStatus(), is(201));
         assertThat(Pattern.matches(".*/payment", post.getLocation().toASCIIString()), is(true));
+    }
+
+    @Test
+    public void should_return_400_when_pay_type_is_empty(){
+        User user = userRepository.createUser(TestHelper.userMap("xxx")).get();
+        Product product = productRepository.save(TestHelper.productMap("apple"));
+        Order order = user.createOrder(TestHelper.orderMap(product.getId())).get();
+        Map<String, Object> map = TestHelper.paymentMap();
+        map.remove("pay_type");
+        Response post = post("users/" + user.getId() + "/orders/" + order.getId() + "/payment", map);
+        assertThat(post.getStatus(), is(400));
+        final List<Map<String, Object>> list = post.readEntity(List.class);
+        assertThat(list.size(), is(1));
     }
 }
