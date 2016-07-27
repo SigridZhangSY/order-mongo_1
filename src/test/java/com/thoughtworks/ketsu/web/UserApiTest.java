@@ -114,4 +114,13 @@ public class UserApiTest extends ApiSupport{
         Response get = get("users/" + user.getId() + "/orders/" + order.getId() + "/payment");
         assertThat(get.getStatus(), is(200));
     }
+
+    @Test
+    public void should_return_404_when_payment_not_exists(){
+        User user = userRepository.createUser(TestHelper.userMap("xxx")).get();
+        Product product = productRepository.save(TestHelper.productMap("apple"));
+        Order order = user.createOrder(TestHelper.orderMap(product.getId())).get();
+        Response get = get("users/" + user.getId() + "/orders/" + order.getId() + "/payment");
+        assertThat(get.getStatus(), is(404));
+    }
 }

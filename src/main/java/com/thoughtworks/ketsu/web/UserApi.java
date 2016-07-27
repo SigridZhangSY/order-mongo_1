@@ -97,6 +97,10 @@ public class UserApi {
     @Path("orders/{orderId}/payment")
     @Produces(MediaType.APPLICATION_JSON)
     public Payment findOrder(@PathParam("orderId") String orderId){
-        return user.findOrder(orderId).get().getPayment();
+        Payment payment = user.findOrder(orderId).get().getPayment();
+        if (payment == null)
+            throw new NotFoundException("can not find payment.");
+        else
+            return payment;
     }
 }
