@@ -18,6 +18,7 @@ import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -81,11 +82,12 @@ public class UserApiTest extends ApiSupport{
     }
 
     @Test
-    public void should_return_201_when_post_payment(){
+    public void should_return_201_when_post_payment_with_specified_parameter(){
         User user = userRepository.createUser(TestHelper.userMap("xxx")).get();
         Product product = productRepository.save(TestHelper.productMap("apple"));
         Order order = user.createOrder(TestHelper.orderMap(product.getId())).get();
-        Response post = post("users/" + user.getId() + "/orders/" + order.getId() + "/payments", new HashMap<String, Object>());
+        Response post = post("users/" + user.getId() + "/orders/" + order.getId() + "/payments", TestHelper.paymentMap());
         assertThat(post.getStatus(), is(201));
+        assertThat(Pattern.matches(".*/payment", post.getLocation().toASCIIString()), is(true));
     }
 }

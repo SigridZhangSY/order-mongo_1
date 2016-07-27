@@ -2,6 +2,7 @@ package com.thoughtworks.ketsu.web;
 
 
 import com.thoughtworks.ketsu.domain.order.Order;
+import com.thoughtworks.ketsu.domain.order.Payment;
 import com.thoughtworks.ketsu.domain.user.User;
 import com.thoughtworks.ketsu.web.exception.InvalidParameterException;
 import com.thoughtworks.ketsu.web.jersey.Routes;
@@ -74,7 +75,10 @@ public class UserApi {
     @POST
     @Path("orders/{orderId}/payments")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createOrder(){
-        return Response.status(201).build();
+    public Response createOrder(@Context Routes routes,
+                                @PathParam("orderId") String orderId,
+                                Map<String, Object> info){
+        user.createPaymentForOrder(info, orderId);
+        return Response.created(routes.paymentUri(user.getId(), orderId)).build();
     }
 }
