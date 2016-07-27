@@ -1,12 +1,18 @@
 package com.thoughtworks.ketsu.domain.order;
 
+import com.mongodb.DB;
 import com.thoughtworks.ketsu.domain.product.Product;
 import com.thoughtworks.ketsu.infrastructure.records.Record;
 import com.thoughtworks.ketsu.web.jersey.Routes;
 
+import javax.inject.Inject;
 import java.util.*;
 
 public class Order implements Record {
+
+    @Inject
+    DB db;
+
     private String id;
     private String userId;
     private String name;
@@ -15,8 +21,9 @@ public class Order implements Record {
     private double totalPrice;
     private Date time;
     private List<OrderItem> items;
+    private Payment payment;
 
-    public Order(String id, String userId, String name, String address, String phone, double totalPrice, Date time, List<OrderItem> items) {
+    public Order(String id, String userId, String name, String address, String phone, double totalPrice, Date time, List<OrderItem> items, Payment payment) {
         this.id = id;
         this.userId = userId;
         this.name = name;
@@ -25,6 +32,7 @@ public class Order implements Record {
         this.totalPrice = totalPrice;
         this.time = time;
         this.items = items;
+        this.payment = payment;
     }
 
     public String getId() {
@@ -58,8 +66,6 @@ public class Order implements Record {
     public List<OrderItem> getItems() {
         return items;
     }
-
-
 
 
     @Override
@@ -97,4 +103,7 @@ public class Order implements Record {
         }};
     }
 
+    public Payment getPayment() {
+        return payment;
+    }
 }

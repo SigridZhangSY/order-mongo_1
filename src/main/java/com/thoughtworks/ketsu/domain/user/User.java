@@ -1,10 +1,12 @@
 package com.thoughtworks.ketsu.domain.user;
 
 
+import com.google.inject.Injector;
 import com.mongodb.*;
 import com.sun.org.apache.xpath.internal.operations.Or;
 import com.thoughtworks.ketsu.domain.order.Order;
 import com.thoughtworks.ketsu.domain.order.OrderItem;
+import com.thoughtworks.ketsu.domain.order.Payment;
 import com.thoughtworks.ketsu.domain.product.Product;
 import com.thoughtworks.ketsu.domain.product.ProductRepository;
 import com.thoughtworks.ketsu.infrastructure.records.Record;
@@ -33,6 +35,9 @@ public class User implements Record{
 
     @Inject
     ProductRepository productRepository;
+
+    @Inject
+    Injector injector;
 
 
     public String getId() {
@@ -67,7 +72,21 @@ public class User implements Record{
 
     public Optional<Order> findOrder(String id){
         BasicDBObject obj = findOrderById(id);
-        return Optional.ofNullable(dbobjToOrder(obj));
+        Order order = dbobjToOrder(obj);
+        injector.injectMembers(order);
+        return Optional.ofNullable(order);
+    }
+
+    public void createPaymentForOrder(Map<String, Object>info, String orderId){
+        DBObject updateCondition = new BasicDBObject();
+        updateCondition.put("_id", new ObjectId(orderId));
+        DBObject updatedValue = new BasicDBObject();
+        DBObject payment = new BasicDBObject();
+        payment.put("pay_type", info.get("pay_type").toString());
+        payment.put("amount", Double.valueOf(info.get("amount").toString()));
+        updatedValue.put("payment", payment);
+        WriteResult result = db.getCollection("orders").update(updateCondition, new BasicDBObject("$set",updatedValue));
+
     }
 
     @Override
@@ -100,6 +119,7 @@ public class User implements Record{
         }
         document.put("total_price", total_price);
         document.put("order_items", items);
+        document.put("payment", null);
 
         DBCollection table = db.getCollection("orders");
         table.insert(document);
@@ -133,6 +153,10 @@ public class User implements Record{
                         Integer.valueOf(item.get("quantity").toString()),
                         Double.valueOf(item.get("amount").toString())
                 )).collect(Collectors.toList());
+        Map<String, Object> paymentMap = (Map)map.get("payment");
+        Payment payment = null;
+        if(paymentMap != null)
+            payment = new Payment(paymentMap.get("pay_type").toString(), Double.valueOf(paymentMap.get("amount").toString()));
         Order order = new Order(map.get("_id").toString(),
                 map.get("user_id").toString(),
                 map.get("name").toString(),
@@ -140,9 +164,9 @@ public class User implements Record{
                 map.get("phone").toString(),
                 Double.valueOf(map.get("total_price").toString()),
                 date,
-                orderItemList
+                orderItemList,
+                payment
         );
-
         return order;
     }
 
